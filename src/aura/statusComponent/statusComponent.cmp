@@ -3,5 +3,5 @@
  -->
 
 <aura:component description="statusComponent">
-    <h1>Hello Component</h1>
+    <h1>Hello Component 1</h1>
 </aura:component>
