@@ -2,6 +2,19 @@
  - Created by User on 25.09.2017.
  -->
 
-<aura:component description="statusComponent">
-    <h1>Hello Component 1</h1>
+<aura:component description="statusComponent" controller="statusComponentController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="objectType" type="String" default="Account"/>
+    <aura:attribute name="fields" type="sObject" default="{}"/>
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+
+    <div class="slds-form-element">
+        <div class="slds-form-element__control">
+            <div class="slds-select_container">
+                <h1>{!v.fields.Name}</h1>
+            </div>
+        </div>
+    </div>
 </aura:component>
