@@ -17,13 +17,16 @@
                 console.log('response:',resObject);
                 //создаю массив ключей
                 //без поля Name и ID
-                var arrayPropNames = Object.getOwnPropertyNames(resObject);
-                arrayPropNames.pop();
-                arrayPropNames = arrayPropNames.slice(1);
-                console.log('propertyNames:', arrayPropNames);
+                var keys = Object.getOwnPropertyNames(resObject);
+                keys.pop();
+                var title = resObject[keys[0]];
+                keys = keys.slice(1);
+                console.log('keys:', keys);
+                console.log('cardTitle:', title);
 
                 component.set("v.fields", resObject);
-                component.set("v.keys", arrayPropNames);
+                component.set("v.keys", keys);
+                component.set("v.cardTitle", title);
             }
             else {
                 console.log("Failed with state: " + state);

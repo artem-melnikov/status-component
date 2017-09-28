@@ -7,13 +7,14 @@
 
     <aura:attribute name="recordId" type="Id"/>
     <aura:attribute name="objectType" type="String" default=""/>
+    <aura:attribute name="cardTitle" type="String"/>
     <aura:attribute name="fields" type="Object"/>
     <aura:attribute name="keys" type="Array"/>
 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
 
 
-    <lightning:card title="{!v.fields.Name}" iconName="{!'standard:'+v.objectType}">
+    <lightning:card title="{!v.cardTitle}" iconName="{!'standard:'+v.objectType}">
         <aura:iteration items="{!v.keys}" var="key">
             <!--
             компонента достающая поле по ключу
