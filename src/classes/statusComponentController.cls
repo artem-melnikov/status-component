@@ -3,6 +3,8 @@
  */
 
 public with sharing class statusComponentController {
+
+    @AuraEnabled
     public static String getObjectTypeById(ID objectId) {
         Schema.SObjectType token = objectId.getSObjectType();
         Schema.DescribeSObjectResult objectDescribe = token.getDescribe();
@@ -30,7 +32,9 @@ public with sharing class statusComponentController {
         sObject settings = getObjectSettings(objectType);
         //формирую строку запроса
         String queryString = getQueryString(settings, objectId);
-        system.debug(queryString);
-        return Database.query(queryString);
+
+        sObject obj = Database.query(queryString).get(0);
+
+        return obj;
     }
 }

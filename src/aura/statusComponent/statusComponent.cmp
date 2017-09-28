@@ -2,19 +2,23 @@
  - Created by User on 25.09.2017.
  -->
 
-<aura:component description="statusComponent" controller="statusComponentController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+<aura:component description="statusComponent" controller="statusComponentController"
+                implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
 
-    <aura:attribute name="recordId" type="Id" />
-    <aura:attribute name="objectType" type="String" default="Account"/>
-    <aura:attribute name="fields" type="sObject" default="{}"/>
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="objectType" type="String" default=""/>
+    <aura:attribute name="fields" type="Object"/>
+    <aura:attribute name="keys" type="Array"/>
 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
 
-    <div class="slds-form-element">
-        <div class="slds-form-element__control">
-            <div class="slds-select_container">
-                <h1>{!v.fields.Name}</h1>
-            </div>
-        </div>
-    </div>
+
+    <lightning:card title="{!v.fields.Name}" iconName="{!'standard:'+v.objectType}">
+        <aura:iteration items="{!v.keys}" var="key">
+            <!--
+            компонента достающая поле по ключу
+            -->
+            <c:mapEntryChild map="{!v.fields}" key="{!key}"/>
+        </aura:iteration>
+    </lightning:card>
 </aura:component>

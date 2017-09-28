@@ -1,0 +1,13 @@
+<!--
+ - Created by User on 28.09.2017.
+ -->
+
+<aura:component description="mapEntryChild">
+    <aura:attribute name="key" type="string"></aura:attribute>
+    <aura:attribute name="value" type="string"></aura:attribute>
+    <aura:attribute name="map" type="map"></aura:attribute>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <p class="slds-p-horizontal--small">{!v.key}:    {!v.value}</p>
+</aura:component>
