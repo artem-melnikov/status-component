@@ -4,8 +4,8 @@ global with sharing class BaseProviderController {
     }
 
     @AuraEnabled
-    global static BaseResponse request(String requestString) {
-        system.debug('BaseProvider');
+    global static String request(String requestString) {
+        system.debug('BaseProvider1');
         BaseResponse result = new BaseResponse();
         try{
             BaseRequest request = (BaseRequest) JSON.deserialize(requestString, BaseRequest.class);
@@ -19,7 +19,7 @@ global with sharing class BaseProviderController {
             result.message = je.getMessage();
         }
         system.debug('RESULT: '+result);
-        return (result);
+        return (JSON.serialize(result));
     }
 
     public class BaseRequest {
@@ -30,7 +30,7 @@ global with sharing class BaseProviderController {
     global class BaseResponse {
         public String status;
         public String message;
-        public String result;
+        public Object result;
 
         public BaseResponse() {
             this.status = 'SUCCESS';

@@ -20,10 +20,10 @@ public with sharing class StatusComponentController implements ProviderInterface
         return result;
     }
 
-    private String getRelatedRecords(String Id) {
+    private Object getRelatedRecords(String Id) {
         system.debug('Id:'+Id);
 
-        String relatedRecords = this.service.getResponseJSON(Id);
+        Object relatedRecords = this.service.getResponseJSON(Id);
         //wrapper logic
 
         return relatedRecords;

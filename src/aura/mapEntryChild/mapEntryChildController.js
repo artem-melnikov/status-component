@@ -4,8 +4,8 @@
 ({
     doInit: function(component, event, helper) {
         var map = component.get("v.map");
-        var key = component.get("v.key");
-
-        component.set("v.value", map[key]);
+        var keys = Object.getOwnPropertyNames(map);
+        console.log('keys: ', keys);
+        component.set("v.keys", keys);
     }
 })

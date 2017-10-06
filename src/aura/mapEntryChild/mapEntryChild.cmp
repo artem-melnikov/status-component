@@ -3,11 +3,12 @@
  -->
 
 <aura:component description="mapEntryChild">
-    <aura:attribute name="key" type="string"></aura:attribute>
-    <aura:attribute name="value" type="string"></aura:attribute>
-    <aura:attribute name="map" type="map"></aura:attribute>
+    <aura:attribute name="keys" type="Array"/>
+    <aura:attribute name="map" type="Object"/>
 
     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 
-    <p class="slds-p-horizontal--small">{!v.key}:    {!v.value}</p>
+    <aura:iteration items="{!v.keys}" var="key">
+        <c:FieldComponent fields="{!v.map}" key="{!key}" />
+    </aura:iteration>
 </aura:component>

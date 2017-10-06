@@ -12,7 +12,7 @@ public with sharing class StatusComponentService {
         return objectDescribe.getName();
     }
 
-    private String getObjectsJSON(List<String> jsonSettings, String Id) {
+    private Object getObjectsJSON(List<String> jsonSettings, String Id) {
         List<Map<String, Object>> finishedMapList = new List<Map<String, Object>>{
         };
 
@@ -42,11 +42,13 @@ public with sharing class StatusComponentService {
                     };
                     SObject record = records.get(0);
                     currMap.put('title', record.get(m.get('title') + ''));
-                    currMap.put('objectType', m.get('objectType'));
+                    currMap.put('objectType', (m.get('objectType')+'').toLowerCase());
                     Map<String, String> fieldsMap = new Map<String, String>{
                     };
                     for (Object field : fields) {
-                        fieldsMap.put(field + '', record.get(field + '') + '');
+                        if(record.get(field + '')!=null){
+                            fieldsMap.put(field + '', record.get(field + '') + '');
+                        }
                     }
                     currMap.put('fields', fieldsMap);
                     system.debug('currMap:' + currMap);
@@ -55,10 +57,10 @@ public with sharing class StatusComponentService {
             }
         }
         system.debug('finishedMapList: ' + JSON.serialize(finishedMapList));
-        return JSON.serialize(finishedMapList);
+        return (finishedMapList);
     }
 
-    public String getResponseJSON(String objectId) {
+    public Object getResponseJSON(String objectId) {
         system.debug('Service');
         //узнаю тип объекта
         String objectType = getApiNameById((Id) objectId);
@@ -70,7 +72,7 @@ public with sharing class StatusComponentService {
         for (Object_Setting__mdt setting : settings) {
             jsonSettings.add(setting.Fields_Definition__c);
         }
-        String responseJSON = getObjectsJSON(jsonSettings, objectId);
+        Object responseJSON = getObjectsJSON(jsonSettings, objectId);
 
         return responseJSON;
     }

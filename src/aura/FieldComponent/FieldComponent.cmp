@@ -1,0 +1,14 @@
+<!--
+ - Created by User on 06.10.2017.
+ -->
+
+<aura:component description="FieldComponent">
+
+    <aura:attribute name="key" type="String"/>
+    <aura:attribute name="fields" type="Object"/>
+    <aura:attribute name="value" type="String"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <p class="slds-p-horizontal--small">{!v.key}:   {!v.value}</p>
+</aura:component>
