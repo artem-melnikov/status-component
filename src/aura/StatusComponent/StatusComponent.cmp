@@ -11,7 +11,7 @@
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
 
     <aura:iteration items="{!v.response}" var="record">
-        <lightning:card title="{!record.title}" iconName="{!'standard:'+record.objectType}">
+        <lightning:card title="{!record.title}" iconName="{!record.icon}">
             <c:mapEntryChild map="{!record.fields}" />
         </lightning:card>
     </aura:iteration>

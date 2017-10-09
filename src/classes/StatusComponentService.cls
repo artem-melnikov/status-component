@@ -33,26 +33,29 @@ public with sharing class StatusComponentService {
                 for (Object field : fields) {
                     query = query + ', ' + field;
                 }
-                query = query + ' from ' + m.get('objectType') + ' where Id=' + '\'' + obj.get(m.get('lookupField') + '') + '\'';
-                List<SObject> records = Database.query(query);
-                system.debug('records: ' + records.get(0).get(m.get('title') + ''));
-                //записываем все в нужной нам форме
-                if (records.size() != 0) {
-                    Map<String, Object> currMap = new Map<String, Object>{
-                    };
-                    SObject record = records.get(0);
-                    currMap.put('title', record.get(m.get('title') + ''));
-                    currMap.put('objectType', (m.get('objectType')+'').toLowerCase());
-                    Map<String, String> fieldsMap = new Map<String, String>{
-                    };
-                    for (Object field : fields) {
-                        if(record.get(field + '')!=null){
-                            fieldsMap.put(field + '', record.get(field + '') + '');
+                if ((obj.get(m.get('lookupField') + '') != null)) {
+                    query = query + ' from ' + m.get('objectType') + ' where Id=' + '\'' + obj.get(m.get('lookupField') + '') + '\'';
+                    List<SObject> records = Database.query(query);
+                    system.debug('records: ' + records.get(0).get(m.get('title') + ''));
+                    //записываем все в нужной нам форме
+                    if (records.size() != 0) {
+                        Map<String, Object> currMap = new Map<String, Object>{
+                        };
+                        SObject record = records.get(0);
+                        currMap.put('title', record.get(m.get('title') + ''));
+                        currMap.put('objectType', (m.get('objectType') + '').toLowerCase());
+                        currMap.put('icon', m.get('icon')+'');
+                        Map<String, String> fieldsMap = new Map<String, String>{
+                        };
+                        for (Object field : fields) {
+                            if (record.get(field + '') != null) {
+                                fieldsMap.put(field + '', record.get(field + '') + '');
+                            }
                         }
+                        currMap.put('fields', fieldsMap);
+                        system.debug('currMap:' + currMap);
+                        finishedMapList.add(currMap);
                     }
-                    currMap.put('fields', fieldsMap);
-                    system.debug('currMap:' + currMap);
-                    finishedMapList.add(currMap);
                 }
             }
         }
