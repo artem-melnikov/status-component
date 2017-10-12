@@ -14,10 +14,12 @@ public with sharing class ObjectDescription {
     //constructor
     public ObjectDescription(String apiObjectName) {
 
-        Schema.SObjectType targetType = Schema.getGlobalDescribe().get(apiObjectName);
-        if (targetType != null) {
-            this.objectDescribe = targetType.newSObject().getSObjectType().getDescribe();
-            this.fieldsDescribe = this.objectDescribe.fields.getMap();
+        Schema.SObjectType sot = ((SObject) Type.forName(apiObjectName).newInstance()).getSobjectType();
+
+        if (sot != null) {
+            this.objectDescribe = sot.newSObject().getSObjectType().getDescribe();
+            this.fieldsDescribe = new Map<String, Schema.SObjectField>{
+            };
 
             if (!ObjectDescription.ObjectsDescriptionMap.containsKey(apiObjectName)) {
                 ObjectDescription.ObjectsDescriptionMap.put(apiObjectName, this);
@@ -34,11 +36,15 @@ public with sharing class ObjectDescription {
         return this.objectDescribe;
     }
     public DescribeFieldResult getFieldDescribe(String fieldName) {
-        DescribeFieldResult fieldDescription = this.fieldsDescribe.get(fieldName).getDescribe();
-        if (fieldDescription == null) {
-            system.debug('unknown field');
-            return null;
+
+        if (!this.fieldsDescribe.containsKey(fieldName)) {
+            Map<String, Schema.SObjectField> fieldMap = this.objectDescribe.fields.getMap();
+            if (fieldMap.get(fieldName) == null) {
+                system.debug('unknown field');
+                return null;
+            }
+            this.fieldsDescribe.put(fieldName, fieldMap.get(fieldName));
         }
-        return fieldDescription;
+        return this.fieldsDescribe.get(fieldName).getDescribe();
     }
 }

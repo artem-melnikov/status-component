@@ -12,92 +12,30 @@ public with sharing class StatusComponentService {
         return objectDescribe.getName();
     }
 
-    private Object getObjectsJSON(List<String> jsonSettings, String Id) {
+    private Object getResponse(List<String> jsonSettings, String Id) {
 
-        List<Map<String, Object>> finishedMapList = new List<Map<String, Object>>{
+        List<ResponseWrapper> responseList = new List<ResponseWrapper>{
         };
 
         for (String str : jsonSettings) {
-            Map<String, Object> m =
-                (Map<String, Object>)
-                    JSON.deserializeUntyped(str);
-            system.debug('map: ' + m);
+            ObjectSetting obj = (ObjectSetting) JSON.deserialize(str, ObjectSetting.class);
 
+            DynamicQuery query = new DynamicQuery(obj, Id);
 
-            //имена полей которые надо вытащить
-            List<Object> fieldsList = (List<Object>) m.get('fields');
-            system.debug('fields: ' + fieldsList);
+            List<SObject> records = Database.query(query.getQueryString());
 
-
-            //вытаскиваем id записей
-            List<SObject> relatedObjIdList = Database.query('select ' + m.get('lookupField') + ' from ' + m.get('childObjectType') + ' where Id=' + '\'' + Id + '\'');
-            system.debug('list: ' + relatedObjIdList);
-
-
-            //вытаскиваем эти записи
-            String query = 'select ' + m.get('title');
-            for (Object field : fieldsList) {
-                query = query + ', ' + field;
-            }
-            if ((relatedObjIdList.get(0).get(m.get('lookupField') + '') == null)) {
-                continue;
-            }
-            query = query + ' from ' + m.get('objectType') + ' where Id=' + '\'' + relatedObjIdList.get(0).get(m.get('lookupField') + '') + '\'';
-            List<SObject> records = Database.query(query);
-            system.debug('record: ' + records.get(0).get(m.get('title') + ''));
-
-
-            //проверяем есть ли записи
             if (records.isEmpty()) {
-                continue;
+                system.debug('No records');
             }
 
+            ResponseWrapper response = new ResponseWrapper(obj, records.get(0));
 
-            //записываем все в нужной нам форме
-            Map<String, Object> currMap = new Map<String, Object>{
-            };
-            SObject record = records.get(0);
-
-
-            //проверяем доступ пользователя к объекту
-            if (!record.getSObjectType().getDescribe().isAccessible()) {
-                system.debug('No Access');
-                continue;
-            }
-            system.debug('Have Access');
-
-
-            //получаем описание полей объекта с которым работаем
-            Map<String, Schema.SObjectField> fieldsDescriptionMap = record.getSObjectType().getDescribe().fields.getMap();
-
-            currMap.put('title', record.get(m.get('title') + ''));
-            currMap.put('objectType', (m.get('objectType') + '').toLowerCase());
-            currMap.put('icon', m.get('icon') + '');
-
-
-            //заполняем список полей к которым есть доступ у пользователя
-            Map<String, String> fieldsMap = new Map<String, String>{
-            };
-            for (Object field : fieldsList) {
-                if (!fieldsDescriptionMap.get(field + '').getDescribe().isAccessible()) {
-                    system.debug('FieldAccess: false');
-                    continue;
-                }
-                if (record.get(field + '') != null) {
-                    system.debug('FieldAccess: ' + fieldsDescriptionMap.get(field + '').getDescribe().isAccessible());
-                    fieldsMap.put(field + '', record.get(field + '') + '');
-                }
-            }
-
-
-            currMap.put('fields', fieldsMap);
-            system.debug('currMap:' + currMap);
-            system.debug('//////////////////////////////////////////////////////////////////////////////////////////////');
-            finishedMapList.add(currMap);
+            system.debug('response: ' + response);
+            responseList.add(response);
         }
 
-        system.debug('finishedMapList: ' + JSON.serialize(finishedMapList));
-        return (finishedMapList);
+        system.debug('responseList: ' + JSON.serialize(responseList));
+        return (responseList);
     }
 
     public Object getResponseJSON(String objectId) {
@@ -112,8 +50,8 @@ public with sharing class StatusComponentService {
         for (Object_Setting__mdt setting : settings) {
             jsonSettings.add(setting.Fields_Definition__c);
         }
-        Object responseJSON = getObjectsJSON(jsonSettings, objectId);
+        Object response = getResponse(jsonSettings, objectId);
 
-        return responseJSON;
+        return response;
     }
 }
