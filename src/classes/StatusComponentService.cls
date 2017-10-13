@@ -12,29 +12,38 @@ public with sharing class StatusComponentService {
         return objectDescribe.getName();
     }
 
-    private Object getResponse(List<String> jsonSettings, String Id) {
+    private Object getStatusComponentResponse(List<String> jsonSettings, String Id) {
 
-        List<ResponseWrapper> responseList = new List<ResponseWrapper>{
+        List<StatusComponentResponse> responseList = new List<StatusComponentResponse>{
         };
 
         for (String str : jsonSettings) {
+            system.debug('Object settings');
             ObjectSetting obj = (ObjectSetting) JSON.deserialize(str, ObjectSetting.class);
-
+            system.debug('Dynamic query');
             DynamicQuery query = new DynamicQuery(obj, Id);
-
+            String queryString = query.getQueryString();
+            if (queryString == '') {
+                continue;
+            }
+            system.debug(queryString);
+            system.debug('getting records');
             List<SObject> records = Database.query(query.getQueryString());
 
             if (records.isEmpty()) {
                 system.debug('No records');
             }
-
-            ResponseWrapper response = new ResponseWrapper(obj, records.get(0));
+            system.debug('creating response');
+            //creating response
+            StatusComponentResponse response = new StatusComponentResponse(obj, records.get(0));
 
             system.debug('response: ' + response);
             responseList.add(response);
+            system.debug('loop end');
         }
 
         system.debug('responseList: ' + JSON.serialize(responseList));
+        system.debug('END');
         return (responseList);
     }
 
@@ -50,7 +59,7 @@ public with sharing class StatusComponentService {
         for (Object_Setting__mdt setting : settings) {
             jsonSettings.add(setting.Fields_Definition__c);
         }
-        Object response = getResponse(jsonSettings, objectId);
+        Object response = getStatusComponentResponse(jsonSettings, objectId);
 
         return response;
     }

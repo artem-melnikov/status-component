@@ -13,12 +13,17 @@ public with sharing class ObjectSetting {
     };
 
     //constructor
-    public ObjectSetting(String ot, String cot, String lf, String t, String i, List<String> f) {
-        this.objectType = ot;
-        this.childObjectType = cot;
-        this.lookupField = lf;
-        this.title = t;
-        this.icon = i;
-        this.fields = f;
+    public ObjectSetting(Object_Setting__mdt settings) {
+        Map<String, Object> m =
+            (Map<String, Object>)
+                JSON.deserializeUntyped(settings.Fields_Definition__c);
+        this.objectType = m.get('objectType') + '';
+        this.childObjectType = m.get('childObjectType') + '';
+        this.lookupField = m.get('lookupField') + '';
+        this.title = m.get('title') + '';
+        this.icon = m.get('icon') + '';
+        for (Object field : (List<Object>) m.get('fields')) {
+            this.fields.add(field + '');
+        }
     }
 }

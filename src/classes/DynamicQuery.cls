@@ -17,16 +17,23 @@ public with sharing class DynamicQuery {
     //methods
     public String getQueryString() {
 
+        AccessChecker access = new AccessChecker(settings.objectType);
+
         //checking access to object
-        ObjectDescription currentObjectDescription = new ObjectDescription(settings.objectType);
-        if (!currentObjectDescription.getObjectDescribe().isAccessible()) {
+        if (!access.getObjectAccess()) {
             return '';
         }
 
         //getting ID of related record
         List<SObject> recordsList = Database.query('select ' + settings.lookupField
             + ' from ' + settings.childObjectType
-            + ' where Id=' + '\'' + this.Id + '\'');
+            + ' where Id=' + '\'' + Id + '\'');
+        if (recordsList.isEmpty()) {
+            return '';
+        }
+        if (recordsList.get(0).get(settings.lookupField) == null) {
+            return '';
+        }
 
         String relatedRecordId = (String) recordsList.get(0).get(settings.lookupField);
 
@@ -34,15 +41,16 @@ public with sharing class DynamicQuery {
             system.debug('relatedRecordId: ' + relatedRecordId);
         }
 
+        //checking access to fields
+        List<String> accessibleFields = access.getAccessibleFields(settings.fields);
+
         //creating query string
         String queryString = 'select ' + settings.title;
-        //adding fields to which have access
-        for (String field : settings.fields) {
-            if (!currentObjectDescription.getFieldDescribe(field).isAccessible()) {
-                continue;
-            }
+        for (String field : accessibleFields) {
             queryString += ', ' + field;
         }
+
+
         queryString += ' from ' + settings.objectType + ' where Id=' + '\'' + relatedRecordId + '\'';
         return queryString;
     }

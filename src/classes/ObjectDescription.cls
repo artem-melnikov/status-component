@@ -5,7 +5,7 @@
 public with sharing class ObjectDescription {
 
     //fields
-    public static Map<String, ObjectDescription> ObjectsDescriptionMap = new Map<String, ObjectDescription>{
+    private static Map<String, ObjectDescription> ObjectsDescriptionMap = new Map<String, ObjectDescription>{
     };
 
     private Schema.DescribeSObjectResult objectDescribe { get; set; }

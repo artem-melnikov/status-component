@@ -2,21 +2,24 @@
  * Created by User on 12.10.2017.
  */
 
-public with sharing class ResponseWrapper {
+public with sharing class StatusComponentResponse {
     public String title { get; set; }
     public String icon { get; set; }
     public Map<String, String> fields = new Map<String, String>{
     };
 
-    public ResponseWrapper(ObjectSetting settings, SObject record) {
+    public StatusComponentResponse(ObjectSetting settings, SObject record) {
         this.title = (String) record.get(settings.title);
         this.icon = settings.icon;
 
+        AccessChecker access = new AccessChecker(settings.objectType);
+
         for (String field : settings.fields) {
-            if (record.get(field) == null) {
+            if (!access.getFieldAccess(field)) {
                 continue;
             }
-            String fieldLabel = ObjectDescription.ObjectsDescriptionMap.get(settings.objectType).getFieldDescribe(field).getLabel();
+            ObjectDescription descriptionOfObject = new ObjectDescription(settings.objectType);
+            String fieldLabel = descriptionOfObject.getFieldDescribe(field).getLabel();
             fields.put(fieldLabel, (String) record.get(field));
         }
     }
