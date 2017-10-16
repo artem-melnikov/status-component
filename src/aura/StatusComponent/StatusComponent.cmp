@@ -6,13 +6,20 @@
                 implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
 
     <aura:attribute name="recordId" type="Id"/>
-    <aura:attribute name="response" type="Array"/>
+    <aura:attribute name="relatedRecords" type="Array"/>
+    <aura:attribute name="aggregationRecords" type="Array"/>
 
     <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
 
-    <aura:iteration items="{!v.response}" var="record">
+
+    <lightning:card title="Aggregation">
+        <aura:iteration items="{!v.aggregationRecords}" var="record">
+            <p class="slds-p-horizontal--small">{!record.label}:   {!record.value}</p>
+        </aura:iteration>
+    </lightning:card>
+    <aura:iteration items="{!v.relatedRecords}" var="record">
         <lightning:card title="{!record.title}" iconName="{!record.icon}">
-            <c:mapEntryChild map="{!record.fields}" />
+            <c:mapEntryChild map="{!record.fields}"/>
         </lightning:card>
     </aura:iteration>
 

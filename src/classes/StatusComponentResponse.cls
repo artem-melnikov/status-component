@@ -15,7 +15,7 @@ public with sharing class StatusComponentResponse {
         AccessChecker access = new AccessChecker(settings.objectType);
 
         for (String field : settings.fields) {
-            if (!access.getFieldAccess(field)) {
+            if (!access.getFieldAccess(field) || record.get(field) == null) {
                 continue;
             }
             ObjectDescription descriptionOfObject = new ObjectDescription(settings.objectType);
