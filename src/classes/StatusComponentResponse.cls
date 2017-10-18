@@ -20,7 +20,8 @@ public with sharing class StatusComponentResponse {
             }
             ObjectDescription descriptionOfObject = new ObjectDescription(settings.objectType);
             String fieldLabel = descriptionOfObject.getFieldDescribe(field).getLabel();
-            fields.put(fieldLabel, (String) record.get(field));
+            System.debug('fields');
+            fields.put(fieldLabel, String.valueOf(record.get(field)));
         }
     }
 }

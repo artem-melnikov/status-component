@@ -23,11 +23,12 @@ public with sharing class DynamicQuery {
         if (!access.getObjectAccess()) {
             return '';
         }
-
         //getting ID of related record
-        List<SObject> recordsList = Database.query('select ' + settings.lookupField
+        String gettingIdString = 'select ' + settings.lookupField
             + ' from ' + settings.childObjectType
-            + ' where Id=' + '\'' + Id + '\'');
+            + ' where Id=' + '\'' + Id + '\'';
+        system.debug('gettingIdString: ' + gettingIdString);
+        List<SObject> recordsList = Database.query(gettingIdString);
         if (recordsList.isEmpty()) {
             return '';
         }

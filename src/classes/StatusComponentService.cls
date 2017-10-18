@@ -24,6 +24,7 @@ public with sharing class StatusComponentService {
             if (queryString == '') {
                 continue;
             }
+            system.debug('dynamicQuery: ' + queryString);
             List<SObject> records = Database.query(query.getQueryString());
 
             if (records.isEmpty()) {
@@ -41,7 +42,8 @@ public with sharing class StatusComponentService {
         //getting object type
         String objectType = getApiNameById((Id) objectId);
         //getting his object settings
-        String querySettings = 'select Fields_Definition__c from Object_Setting__mdt where Object__r.DeveloperName=' + '\'' + objectType + '\'';
+        String querySettings = 'select Fields_Definition__c from Object_Setting__mdt where Object__r.DeveloperName=' + '\'' + objectType.replace('__c', '') + '\'';
+        system.debug('queryString: ' + querySettings);
         List<Object_Setting__mdt> settings = Database.query(querySettings);
         List<String> jsonSettings = new List<String>();
 
@@ -58,7 +60,7 @@ public with sharing class StatusComponentService {
         //getting object type
         String objectType = getApiNameById((Id) objectId);
         //getting his aggregation settings
-        String querySettings = 'select Child_Object_Type__c, function__c, Field_Name__c, Label__c from	Aggregation_Setting__mdt where Object__r.DeveloperName=' + '\'' + objectType + '\'';
+        String querySettings = 'select Child_Object_Type__c, function__c, Field_Name__c, Label__c from	Aggregation_Setting__mdt where Object__r.DeveloperName=' + '\'' + objectType.replace('__c', '') + '\'';
         system.debug(querySettings);
         List<Aggregation_Setting__mdt> settings = Database.query(querySettings);
         system.debug(settings);
@@ -81,10 +83,11 @@ public with sharing class StatusComponentService {
         for (AggregationSetting setting : settings) {
             String queryString = 'select ' + setting.function + '(' + setting.fieldName + ') from ';
             if (setting.function == 'COUNT') {
-                queryString += setting.childObjectType + ' where ' + objectType + 'Id=' + '\'' + Id + '\'';
+                queryString += setting.childObjectType + ' where ' + objectType.replace('__c', '__r') + '.Id=' + '\'' + Id + '\'';
             } else {
                 queryString += objectType;
             }
+            system.debug('query: ' + queryString);
             AggregateResult[] agr = Database.query(queryString);
             if (agr.isEmpty()) {
                 continue;
